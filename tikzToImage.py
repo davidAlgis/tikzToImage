@@ -6,6 +6,14 @@ from PIL import Image
 import shutil
 import sys
 
+def check_pdflatex():
+    """Check if pdflatex is available in the system's PATH."""
+    try:
+        subprocess.run(["pdflatex", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError:
+        print("Error: pdflatex is not installed or not found in the system's PATH.")
+        sys.exit(1)
+
 def create_latex_file(tikz_file_path, output_latex_file, packages_input):
     print("Generating LaTeX file...")
     tikz_file_path_escaped = tikz_file_path.replace('\\', '/')
@@ -58,6 +66,9 @@ def tikz_to_png(tikz_file_path, output_png_file, dpi=300, packages_input=""):
     if not os.path.exists(tikz_file_path):
         print(f"Error: The input file '{tikz_file_path}' does not exist.")
         sys.exit(1)
+    
+    # Check if pdflatex is available
+    check_pdflatex()
     
     # Copy the TikZ file to the current directory
     current_dir = os.getcwd()
